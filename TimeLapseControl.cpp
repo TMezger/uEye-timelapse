@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cstring>
+#include <ctime>
 
 int getBitsPerPixelForColorformat(int colorFormat)
 {
