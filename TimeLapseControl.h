@@ -16,9 +16,10 @@ public:
 
 private:
     void InitCamera();
+    bool isHistogramOK(int imageID);
 
     std::chrono::time_point<std::chrono::system_clock> m_lastTimeCaptured;
-    bool m_firstImageCaptured;
+    bool m_useNextImage;
     bool m_initializationSuccessful;
     unsigned int m_timeBetweenImages_s;
     HIDS m_hCam;
@@ -26,4 +27,6 @@ private:
     char * m_imageMem[NUMBER_OF_IMAGE_MEM];
     int m_imageMemID[NUMBER_OF_IMAGE_MEM];
     std::string m_path;
+    IS_RECT m_imageSize;
+    int m_colorMode;
 };
