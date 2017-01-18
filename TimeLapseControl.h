@@ -2,7 +2,7 @@
 #include <chrono>
 #include <string>
 
-const static unsigned int NUMBER_OF_IMAGE_MEM = 3;
+const static unsigned int NUMBER_OF_IMAGE_MEM = 4;
 
 class CTimeLapseControl
 {

@@ -75,7 +75,7 @@ CTimeLapseControl::CTimeLapseControl()
     m_lastTimeCaptured = std::chrono::system_clock::now();
     m_useNextImage = false;
     m_initializationSuccessful = true;
-    m_path = "BaucamImages\\";
+    m_path = "BaucamImages/";
     m_colorMode = 0;
     m_imageSize = IS_RECT();
 
