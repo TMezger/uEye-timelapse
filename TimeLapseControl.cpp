@@ -4,6 +4,13 @@
 #include <iomanip>
 #include <cstring>
 #include <ctime>
+#include <cstdio>
+#include <ios>
+#include <fstream>
+
+#ifdef __linux__
+    #include <sys/statvfs.h>
+#endif
 
 int getBitsPerPixelForColorformat(int colorFormat)
 {
@@ -187,21 +194,24 @@ void CTimeLapseControl::Run()
 
                 // Build up timestamp string
                 auto in_time_t = std::chrono::system_clock::to_time_t(m_lastTimeCaptured);
-                std::stringstream ss;
+                std::stringstream fileDate;
+                std::stringstream infoDate;
 #ifdef __linux__
                 struct std::tm * timeInfo;
                 timeInfo = localtime(&in_time_t);
-                ss << m_path << "Image_" << std::put_time(timeInfo, "%Y-%m-%d_%H-%M-%S") << ".jpeg";
+                fileDate << m_path << "Image_" << std::put_time(timeInfo, "%Y-%m-%d_%H-%M-%S") << ".jpeg";
+                infoDate << std::put_time(timeInfo, "%d %m %Y, %H:%M:%S Uhr");
 #else
                 struct std::tm timeInfo;
                 localtime_s(&timeInfo, &in_time_t);
-                ss << m_path << "Image_" << std::put_time(&timeInfo, "%Y-%m-%d_%H-%M-%S") << ".jpeg";
+                fileDate << m_path << "Image_" << std::put_time(&timeInfo, "%Y-%m-%d_%H-%M-%S") << ".jpeg";
+                infoDate << std::put_time(&timeInfo, "%d.%m.%Y, %H:%M:%S Uhr");
 #endif
                 wchar_t fileName[1024];
                 memset(fileName, 0, 1024);
-                for (unsigned int i = 0; i < ss.str().length(); ++i)
+                for (unsigned int i = 0; i < fileDate.str().length(); ++i)
                 {
-                    fileName[i] = ss.str().at(i);
+                    fileName[i] = fileDate.str().at(i);
                 }
 
                 // save the current image with a quality of 90%
@@ -217,6 +227,29 @@ void CTimeLapseControl::Run()
                 {
                     printf("Save image error: %d\n", ret);
                 }
+
+                // Remove last stored image from common location
+                std::remove("lastImage.jpeg");
+
+                // Store new last image to common location for webserver usage
+                std::ifstream src(fileDate.str(), std::ios::binary);
+                std::ofstream dst("lastImage.jpeg", std::ios::binary);
+                dst << src.rdbuf();
+
+                // Store the current date to a file for html info
+                std::ofstream dateFile("dateInfo.html");
+                dateFile << "<link href=\"txtstyle.css\" rel=\"stylesheet\" type=\"text/css\" />\n";
+                dateFile << infoDate.str() << std::endl;
+
+                // For linux store the remaining discspace of the pi
+#ifdef __linux__
+                if((statvfs(argv[i],&fiData)) < 0 ) {
+                    cout << ":( keine Speicherinformation!"  << argv[i];
+                } else
+                {
+                    dateFile << "Freier Speicher: " <<  ((fiData.f_bavail * f_bsize) / 1000000) << "MB" <<std::endl;
+                }
+#endif
             }
         }
 
