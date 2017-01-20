@@ -10,6 +10,7 @@
 
 #ifdef __linux__
     #include <sys/statvfs.h>
+    #include "LinuxFileSystemOperations.h"
 #endif
 
 int getBitsPerPixelForColorformat(int colorFormat)
@@ -243,12 +244,20 @@ void CTimeLapseControl::Run()
 
                 // For linux store the remaining discspace of the pi
 #ifdef __linux__
-                if((statvfs(argv[i],&fiData)) < 0 ) {
-                    cout << ":( keine Speicherinformation!"  << argv[i];
-                } else
+		int64_t free_disk_space;
+		get_int64_value_from_ascii_string(do_console_command_get_result((char*)"df -k /tmp | tail -1 | awk '{print $4}'"), 0, &free_disk_space);		//Get free space in kB
+		dateFile << "Freier Speicher: " << (free_disk_space / 1000) << "MB" << std::endl;
+/*
+                struct statvfs stat;
+                if((statvfs("/",&stat)) < 0 )
                 {
-                    dateFile << "Freier Speicher: " <<  ((fiData.f_bavail * f_bsize) / 1000000) << "MB" <<std::endl;
+                    dateFile << ":( keine Speicherinformation!" << std::endl;
                 }
+                else
+                {
+                    dateFile << "Freier Speicher: " <<  ((stat.f_bfree * stat.f_bsize) / 1000000) << "MB" <<std::endl;
+                }
+*/
 #endif
             }
         }
