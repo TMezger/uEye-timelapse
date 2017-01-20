@@ -17,7 +17,7 @@ void waitForStop(CTimeLapseControl * myControl)
 int main()
 {
     CTimeLapseControl myControl;
-    myControl.SetTimeBetweenCapturedImages(60);
+    myControl.SetTimeBetweenCapturedImages(3600);
     myControl.SetImagePath(std::string("BaucamImages/"));
     std::thread t1 (waitForStop, &myControl);
     myControl.Run();

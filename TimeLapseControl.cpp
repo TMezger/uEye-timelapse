@@ -174,7 +174,7 @@ void CTimeLapseControl::Run()
         ret = is_WaitForNextImage(m_hCam, 2 * frameTime_ms, &currentImageData, &currentImageID);
         if ((ret != IS_SUCCESS) && (ret != IS_CAPTURE_STATUS))
         {
-            printf("Capture error: %d\n", ret);
+//            printf("Capture error: %d\n", ret);
         }
 
         // Check the current elapsed time if a new image should be stored to the disc (or for the first time)
@@ -226,7 +226,7 @@ void CTimeLapseControl::Run()
                 ret = is_ImageFile(m_hCam, IS_IMAGE_FILE_CMD_SAVE, (void*)&ImageFileParams, sizeof(ImageFileParams));
                 if (ret != IS_SUCCESS)
                 {
-                    printf("Save image error: %d\n", ret);
+//                    printf("Save image error: %d\n", ret);
                 }
 
                 // Remove last stored image from common location
@@ -266,7 +266,7 @@ void CTimeLapseControl::Run()
         ret = is_UnlockSeqBuf(m_hCam, currentImageID, currentImageData);
         if (ret != IS_SUCCESS)
         {
-            printf("Unlock buffer (1) error: %d\n", ret);
+//            printf("Unlock buffer (1) error: %d\n", ret);
         }
     } while (m_captureRunning);
 
@@ -361,7 +361,7 @@ bool CTimeLapseControl::isHistogramOK(int imageID)
     int ret = is_GetImageHistogram(m_hCam, imageID, IS_CM_RGB8_PACKED, histogramBuffer);
     if (ret != IS_SUCCESS)
     {
-        printf("Get image hostogram failed with error: %d\n", ret);
+//        printf("Get image hostogram failed with error: %d\n", ret);
         return false;
     }
 
